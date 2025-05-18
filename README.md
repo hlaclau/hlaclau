@@ -4,4 +4,6 @@
   <em>A passionate developer from <strong>Bordeaux, France</strong> 🇫🇷</em>
 </p>
 
-<img align="center" src="assets/ge999.gif">
+<div align="center">
+  <img align="center" width="60%" src="assets/ge999.gif">
+</div>
