@@ -5,5 +5,5 @@
 </p>
 
 <div align="center">
-  <img align="center" width="60%" src="assets/ge999.gif">
+  <img align="center" width="60%" src="assets/emeraldas.gif">
 </div>
