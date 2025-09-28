@@ -3,7 +3,3 @@
 <p align="center">
   <em>A passionate developer from <strong>Bordeaux, France</strong> 🇫🇷</em>
 </p>
-
-<div align="center">
-  <img align="center" width="60%" src="assets/emeraldas.gif">
-</div>
