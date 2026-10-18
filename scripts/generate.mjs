@@ -7,7 +7,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const font = (f) => readFileSync(join(root, "scripts/fonts", f)).toString("base64");
 
 const W = 1200, H = 380, MAUVE = "#cba6f7";
-const FRAMES = 4, SPACING = 30, STEP = 10;
+const FRAMES = 3, SPACING = 42, STEP = 24;
 
 // contour field, same idea as the portfolio: horizontal lines twisted by two
 // counter-rotating vortices. `ph` is a loop phase so the animation closes.
@@ -29,11 +29,17 @@ const warp = (x, y, ph) => {
   return [x, y];
 };
 const line = (y0, ph) => {
-  let d = "";
+  const pts = [];
   for (let x0 = -20; x0 <= W + 20; x0 += STEP) {
     const swell = Math.sin(x0 / 260 + y0 / 180 + ph) * 8;
-    const [x, y] = warp(x0, y0 + swell, ph);
-    d += `${d ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`;
+    pts.push(warp(x0, y0 + swell, ph));
+  }
+  // quadratic curves through segment midpoints keep the lines smooth with few points
+  const f = (n) => n.toFixed(1);
+  let d = `M${f(pts[0][0])} ${f(pts[0][1])}`;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [x, y] = pts[i], [nx, ny] = pts[i + 1];
+    d += `Q${f(x)} ${f(y)} ${f((x + nx) / 2)} ${f((y + ny) / 2)}`;
   }
   return d;
 };
@@ -60,19 +66,19 @@ writeFileSync(join(root, "assets/header.svg"), `<svg xmlns="http://www.w3.org/20
 .dot{animation:pulse 3s ease-in-out infinite}@keyframes pulse{50%{opacity:.25}}
 </style>
 <defs>
-<linearGradient id="f" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".04"/><stop offset=".5" stop-color="#fff" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity=".3"/></linearGradient>
+<linearGradient id="f" gradientUnits="userSpaceOnUse" x1="0" x2="${W}" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".04"/><stop offset=".5" stop-color="#fff" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity=".3"/></linearGradient>
 <radialGradient id="m" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".85"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
 <clipPath id="c"><rect width="${W}" height="${H}" rx="20"/></clipPath>
 </defs>
 <g clip-path="url(#c)">
 <rect width="${W}" height="${H}" fill="#000"/>
-<g stroke="url(#f)" stroke-width="1.1">
+<g stroke="url(#f)" stroke-width="1.1" stroke-linejoin="round" shape-rendering="geometricPrecision">
 ${lines}</g>
 <ellipse cx="600" cy="190" rx="520" ry="170" fill="url(#m)"/>
 <text x="600" y="172" text-anchor="middle" class="name rise" fill="#fff">Hugo Laclau</text>
 <text x="600" y="224" text-anchor="middle" class="title rise" style="animation-delay:.35s">Software engineer</text>
 <rect class="rule" x="510" y="252" width="180" height="1" fill="${MAUVE}"/>
-<text x="600" y="290" text-anchor="middle" class="meta rise" style="animation-delay:.9s">Betclic Group · Vault  /  M2 Ynov  /  Bordeaux</text>
+<text x="600" y="290" text-anchor="middle" class="meta rise" style="animation-delay:.9s">Betclic Group  /  M2 Ynov  /  Bordeaux</text>
 <circle class="dot" cx="600" cy="322" r="3" fill="${MAUVE}"/>
 </g>
 <rect x=".5" y=".5" width="${W - 1}" height="${H - 1}" rx="20" stroke="#fff" stroke-opacity=".12"/>
